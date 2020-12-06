@@ -82,7 +82,7 @@ namespace CRUD.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapFallbackToController("Index", "FallbackController");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
