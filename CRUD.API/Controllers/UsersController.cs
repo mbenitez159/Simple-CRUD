@@ -14,27 +14,15 @@ namespace CRUD.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public UsersController(
-            IUnitOfWork unitOfWork,
-            IMapper mapper
-            )
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
-
-
 
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _unitOfWork.Users.GetAll();
+            var users = await UnitOfWork.Users.GetAll();
 
-            var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+            var usersToReturn = Mapper.Map<IEnumerable<UserForListDto>>(users);
 
             return Ok(usersToReturn);
         }
@@ -44,12 +32,12 @@ namespace CRUD.API.Controllers
         [Route("{UserId}", Name = "UserLink")]
         public async Task<IActionResult> Get(int UserId)
         {
-            var user = await _unitOfWork.Users.Get(UserId);
+            var user = await UnitOfWork.Users.Get(UserId);
 
             if (user is null)
                 return NotFound();
 
-            var userToReturn = _mapper.Map<UserForDetailDto>(user);
+            var userToReturn = Mapper.Map<UserForDetailDto>(user);
 
             return Ok(userToReturn);
         }
@@ -58,11 +46,11 @@ namespace CRUD.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UserForCreationDto UserDto)
         {
-            var user = _mapper.Map<User>(UserDto);
+            var user = Mapper.Map<User>(UserDto);
 
-            _unitOfWork.Users.Add(user);
+            UnitOfWork.Users.Add(user);
 
-            if (await _unitOfWork.Complete())
+            if (await UnitOfWork.Complete())
                 return CreatedAtRoute("UserLink", new { UserId = user.Id }, UserDto);
 
             throw new Exception($"Something went wrong trying to create an user");
@@ -75,11 +63,11 @@ namespace CRUD.API.Controllers
         {
             UserForUpdate.Id = UserId;
 
-            var userFromRepo = await _unitOfWork.Users.Get(UserId);
+            var userFromRepo = await UnitOfWork.Users.Get(UserId);
 
-            _mapper.Map(UserForUpdate, userFromRepo);
+            Mapper.Map(UserForUpdate, userFromRepo);
 
-            if (await _unitOfWork.Complete())
+            if (await UnitOfWork.Complete())
                 return Ok();
 
             throw new Exception($"Update User {UserId} failed on save");
@@ -90,11 +78,11 @@ namespace CRUD.API.Controllers
         public async Task<IActionResult> Delete(int UserId)
         {
 
-            var userFromRepo = await _unitOfWork.Users.Get(UserId);
+            var userFromRepo = await UnitOfWork.Users.Get(UserId);
 
-            _unitOfWork.Users.Remove(userFromRepo);
+            UnitOfWork.Users.Remove(userFromRepo);
 
-            if (await _unitOfWork.Complete())
+            if (await UnitOfWork.Complete())
                 return Ok();
 
             throw new Exception($"Update User {UserId} failed on save");
