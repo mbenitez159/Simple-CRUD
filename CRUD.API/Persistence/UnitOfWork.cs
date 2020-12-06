@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using CRUD.API.Core;
 using CRUD.API.Core.Repositories;
+using CRUD.API.Persistence.Factory;
 using CRUD.API.Persistence.Repositories;
 
 namespace CRUD.API.Persistence
@@ -17,7 +18,7 @@ namespace CRUD.API.Persistence
         public UnitOfWork(DataBaseContext context)
         {
             _context = context;
-            Users = new UserRepository(context);
+            Users = RepositoryFactory.Create<UserRepository>(context);
         }
 
         public IUserRepository Users { get; private set; }
@@ -34,7 +35,7 @@ namespace CRUD.API.Persistence
             catch (Exception ex)
             {
                 transaction.Rollback();
-                //logger implementatation here like log4net
+                //we can implment in here a log to track errors
                 ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
             }
             return false;
