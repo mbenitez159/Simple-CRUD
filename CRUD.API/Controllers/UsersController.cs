@@ -63,7 +63,7 @@ namespace CRUD.API.Controllers
             _unitOfWork.Users.Add(user);
 
             if (await _unitOfWork.Complete())
-                return CreatedAtRoute("UserLink", new { user.Id }, UserDto);
+                return CreatedAtRoute("UserLink", new { UserId = user.Id }, UserDto);
 
             throw new Exception($"Something went wrong trying to create an user");
         }

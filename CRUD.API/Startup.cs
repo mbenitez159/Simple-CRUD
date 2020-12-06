@@ -1,4 +1,4 @@
-using System.Linq;
+using AutoMapper;
 
 using CRUD.API.Core;
 using CRUD.API.Persistence;
@@ -27,6 +27,8 @@ namespace CRUD.API
         {
             services.AddDbContext<DataBaseContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnectionLite")));
             services.AddControllers();
+            services.AddCors();
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSwaggerGen(c =>
@@ -43,6 +45,7 @@ namespace CRUD.API
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CRUD.API v1"));
+                app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             }
 
             // app.UseHttpsRedirection();
@@ -54,6 +57,7 @@ namespace CRUD.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "FallBack");
             });
         }
     }
