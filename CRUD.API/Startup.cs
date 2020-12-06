@@ -73,12 +73,16 @@ namespace CRUD.API
 
             app.UseRouting();
 
+            app.UseStaticFiles();
+
+            app.UseDefaultFiles();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                //endpoints.MapFallbackToController("Index", "FallBack");
+                endpoints.MapFallbackToController("Index", "FallbackController");
             });
         }
     }
